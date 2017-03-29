@@ -33,7 +33,7 @@ typedef struct {
     (OUT).y = (V).y + S;\
     (OUT).z = (V).z + S;
 #define VEC3_LENGTH(V, OUT)\
-    (OUT) = sqrt((V).x*(V).x + (V).y*(V).y + (V).z*(V).z);
+    (OUT) = sqrtf((V).x*(V).x + (V).y*(V).y + (V).z*(V).z);
 #define VEC3_UNIT_VECTOR(V, TMP, OUT)\
     VEC3_LENGTH(V, TMP);\
     VEC3_DIVS(V, TMP, OUT);
