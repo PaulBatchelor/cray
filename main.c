@@ -37,6 +37,7 @@ static vec3 color(cray_ray *r)
         VEC3_SUB(cray_ray_point_at_param(r, t), tmp[0], tmp[0]);
         /* 't' is not longer needed, so use it as tmp variable  */
         VEC3_UNIT_VECTOR(tmp[0], t, tmp[0]);
+
         /* N = (N + 1) * 0.5 */
         VEC3_ADDS(tmp[0], 1, tmp[0]);
         VEC3_MULS(tmp[0], 0.5, tmp[0]);
@@ -91,7 +92,7 @@ int main()
     VEC3_SET(vertical, 0.0, 2.0, 0.0);
     VEC3_SET(origin, 0.0, 0.0, 0.0);
 
-    fprintf(fp, "P3\n %d %d\n255\n", nx, ny);
+    fprintf(fp, "P3\n%d %d\n255\n", nx, ny);
 
     for(j = ny -1; j >= 0; j--) {
         for(i = 0; i < nx; i++) {
