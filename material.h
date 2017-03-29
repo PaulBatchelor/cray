@@ -2,7 +2,7 @@
 #define MATERIALH
 
 
-enum { CRAY_EMPTY, CRAY_LAMBERTIAN, CRAY_METAL };
+enum { CRAY_EMPTY, CRAY_LAMBERTIAN, CRAY_METAL, CRAY_DIELECTRIC };
 
 typedef int (* cray_matfunc) (cray_material*, 
         cray_hitable *, 
@@ -17,7 +17,9 @@ struct cray_material {
 };
 
 void cray_material_init(cray_material *m);
+vec3 cray_reflect(vec3 *v, vec3 *n);
 
 #include "lambertian.h"
 #include "metal.h"
+#include "dielectric.h"
 #endif

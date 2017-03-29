@@ -76,6 +76,7 @@ int main()
     cray_hitablelist world;
     cray_camera cam;
     cray_lambertian lam[2];
+    cray_dielectric di[1];
     cray_metal met[2];
     unsigned int step;
 
@@ -100,6 +101,9 @@ int main()
     cray_metal_color(&met[1], 0.8, 0.8, 0.8);
     cray_metal_fuzz(&met[1], 0.3);
 
+    cray_dielectric_init(&di[0]);
+    cray_dielectric_refraction(&di[0], 1.5);
+
     VEC3_SET(tmp[0], 0, 0, -1);
     cray_sphere_init(&sphere[0], &tmp[0], 0.5, &lam[0].mat);
     VEC3_SET(tmp[0], 0, -100.5, -1);
@@ -108,7 +112,7 @@ int main()
     VEC3_SET(tmp[0], 1, 0, -1);
     cray_sphere_init(&sphere[2], &tmp[0], 0.5, &met[0].mat);
     VEC3_SET(tmp[0], -1, 0, -1);
-    cray_sphere_init(&sphere[3], &tmp[0], 0.5, &met[1].mat);
+    cray_sphere_init(&sphere[3], &tmp[0], 0.5, &di[0].mat);
 
     cray_sphere_mk_obj(&sphere[0], &obj[0]);
     cray_sphere_mk_obj(&sphere[1], &obj[1]);

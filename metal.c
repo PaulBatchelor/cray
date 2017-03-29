@@ -5,16 +5,6 @@
 #include "material.h"
 #include "rand.h"
 
-static vec3 reflect(vec3 *v, vec3 *n)
-{
-    vec3 tmp;
-    CRAYFLT s;
-    s = 2.0 * VEC3_DOT(*v, *n);
-    VEC3_MULS(*n, s, tmp);
-    VEC3_SUB(*v, tmp, tmp);
-    return tmp;
-}
-
 static int metal(cray_material *m, 
         cray_hitable *hit, 
         cray_ray *r_in, 
@@ -28,7 +18,7 @@ static int metal(cray_material *m,
 
     met = m->ud;
     VEC3_UNIT_VECTOR(cray_ray_direction(r_in), tmp, reflected);
-    reflected = reflect(&reflected, &hit->normal);
+    reflected = cray_reflect(&reflected, &hit->normal);
     fuzz = random_in_unit_sphere();
     VEC3_MULS(fuzz, met->fuzz, fuzz);
     VEC3_ADD(reflected, fuzz, reflected);
