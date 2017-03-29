@@ -33,12 +33,10 @@ typedef struct {
     (OUT).x = (V).x + S;\
     (OUT).y = (V).y + S;\
     (OUT).z = (V).z + S;
-#define VEC3_LENGTH(V, OUT)\
-    (OUT) = cray_sqrtf((V).x*(V).x + (V).y*(V).y + (V).z*(V).z);
-#define VEC3_SQUARED_LENGTH(V)\
-    ((V).x*(V).x + (V).y*(V).y + (V).z*(V).z)
+#define VEC3_LENGTH(V) (cray_sqrtf((V).x*(V).x + (V).y*(V).y + (V).z*(V).z))
+#define VEC3_SQUARED_LENGTH(V) ((V).x*(V).x + (V).y*(V).y + (V).z*(V).z)
 #define VEC3_UNIT_VECTOR(V, TMP, OUT)\
-    VEC3_LENGTH(V, TMP);\
+    TMP=VEC3_LENGTH(V);\
     VEC3_DIVS(V, TMP, OUT);
 #define VEC3_DOT(A, B) ((A).x*(B).x + (A).y*(B).y + (A).z*(B).z)
 #define VEC3_SQRT(V, OUT)\

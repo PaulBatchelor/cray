@@ -70,12 +70,13 @@ int main()
     vec3 tmp[2];
     cray_ray r;
     CRAYFLT u, v;
-    cray_sphere sphere[2];
-    cray_object obj[2];
-    cray_object *pobj[2];
+    cray_sphere sphere[4];
+    cray_object obj[4];
+    cray_object *pobj[4];
     cray_hitablelist world;
     cray_camera cam;
     cray_lambertian lam[2];
+    cray_metal met[2];
     unsigned int step;
 
     nx = 200;
@@ -89,21 +90,37 @@ int main()
 
     cray_lambertian_init(&lam[0]);
     cray_lambertian_color(&lam[0], 0.8, 0.3, 0.3);
-    
     cray_lambertian_init(&lam[1]);
     cray_lambertian_color(&lam[1], 0.8, 0.8, 0.0);
+
+    cray_metal_init(&met[0]);
+    cray_metal_color(&met[0], 0.8, 0.6, 0.2);
+    cray_metal_fuzz(&met[0], 0.9);
+    cray_metal_init(&met[1]);
+    cray_metal_color(&met[1], 0.8, 0.8, 0.8);
+    cray_metal_fuzz(&met[1], 0.3);
 
     VEC3_SET(tmp[0], 0, 0, -1);
     cray_sphere_init(&sphere[0], &tmp[0], 0.5, &lam[0].mat);
     VEC3_SET(tmp[0], 0, -100.5, -1);
     cray_sphere_init(&sphere[1], &tmp[0], 100, &lam[1].mat);
+    
+    VEC3_SET(tmp[0], 1, 0, -1);
+    cray_sphere_init(&sphere[2], &tmp[0], 0.5, &met[0].mat);
+    VEC3_SET(tmp[0], -1, 0, -1);
+    cray_sphere_init(&sphere[3], &tmp[0], 0.5, &met[1].mat);
 
     cray_sphere_mk_obj(&sphere[0], &obj[0]);
     cray_sphere_mk_obj(&sphere[1], &obj[1]);
+    cray_sphere_mk_obj(&sphere[2], &obj[2]);
+    cray_sphere_mk_obj(&sphere[3], &obj[3]);
 
     pobj[0] = &obj[0];
     pobj[1] = &obj[1];
-    cray_hitablelist_init(&world, pobj, 2);
+    pobj[2] = &obj[2];
+    pobj[3] = &obj[3];
+
+    cray_hitablelist_init(&world, pobj, 4);
 
 
     cray_camera_init(&cam);

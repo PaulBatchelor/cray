@@ -19,4 +19,5 @@ struct cray_material {
 void cray_material_init(cray_material *m);
 
 #include "lambertian.h"
+#include "metal.h"
 #endif
