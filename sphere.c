@@ -20,6 +20,7 @@ int cray_sphere_hit(cray_object *obj,
     CRAYFLT a, b, c;
     CRAYFLT discriminant;
     CRAYFLT temp;
+    CRAYFLT foo;
     cray_sphere *sphere;
 
     sphere = cray_to_sphere(obj);
@@ -31,8 +32,7 @@ int cray_sphere_hit(cray_object *obj,
     discriminant = b*b - a*c;
 
     if(discriminant > 0) {
-        /* temp = (-b - sqrt(discriminant)) / (CRAYFLT)a; */
-        temp = (-b - sqrtf(b*b-a*c)) / (CRAYFLT)a;
+        temp = (-b - sqrtf(discriminant)) / a;
         if(temp < t_max && temp > t_min) {
             rec->t = temp;
             rec->p = cray_ray_point_at_param(r, rec->t);
