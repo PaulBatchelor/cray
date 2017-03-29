@@ -21,7 +21,6 @@ static vec3 color(cray_ray *r, cray_hitablelist *world)
     if(cray_hitablelist_hit(world, r, 0.0, FLT_MAX, &rec)) {
         VEC3_ADDS(rec.normal, 1.0, tmp[0]);
         VEC3_MULS(tmp[0], 0.5, tmp[0]);
-        /* if(tmp[0].z < 0) printf("PROBLEM!\n"); */
         return tmp[0];
     } else {
 

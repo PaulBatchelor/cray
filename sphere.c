@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include <math.h>
 #include "vec3.h"
 #include "ray.h"
@@ -38,10 +37,6 @@ int cray_sphere_hit(cray_object *obj,
             /* (rec->p - center) / radius */
             /* reuse oc variable */
             VEC3_SUB(rec->p, sphere->center, oc);
-            if(fabs(oc.z) > sphere->radius) {
-                printf("0: we got a problem %g! radius %g temp %g\n", 
-                        oc.z, sphere->radius, temp);
-            }
             VEC3_DIVS(oc, sphere->radius, oc);
             rec->normal = oc;
             return 1;
@@ -53,7 +48,6 @@ int cray_sphere_hit(cray_object *obj,
             /* (rec->p - center) / radius */
             /* reuse oc variable */
             VEC3_SUB(rec->p, sphere->center, oc);
-            /* if(oc.z < -1) printf("1: we got a problem %g!\n", oc.z); */
             VEC3_DIVS(oc, sphere->radius, oc);
             rec->normal = oc;
             return 1;
