@@ -4,7 +4,7 @@
 #include "vec3.h"
 #include "ray.h"
 
-static int hit_sphere(const vec3 *center, float radius, cray_ray *r)
+static float hit_sphere(const vec3 *center, float radius, cray_ray *r)
 {
     vec3 oc;
     float a, b, c;
@@ -15,7 +15,11 @@ static int hit_sphere(const vec3 *center, float radius, cray_ray *r)
     b = 2.0 * VEC3_DOT(oc, cray_ray_direction(r));
     c = VEC3_DOT(oc, oc) - radius * radius;
     discriminant = b*b - 4*a*c;
-    return (discriminant > 0);
+    if(discriminant < 0) {
+        return -1;
+    } else {
+        return (-b - sqrt(discriminant)) / (2.0*a);
+    }
 }
 
 static vec3 color(cray_ray *r)
@@ -25,8 +29,17 @@ static vec3 color(cray_ray *r)
     float t;
 
     VEC3_SET(tmp[0], 0, 0, -1);
-    if(hit_sphere(&tmp[0], 0.5, r)) {
-        VEC3_SET(tmp[0], 1, 0, 0);
+
+    t = hit_sphere(&tmp[0], 0.5, r);
+
+    if(t > 0.0) {
+        /* N = unit_vector(r.point_at_parameter(t) - vec3(0, 0, -1)); */
+        VEC3_SUB(cray_ray_point_at_param(r, t), tmp[0], tmp[0]);
+        /* 't' is not longer needed, so use it as tmp variable  */
+        VEC3_UNIT_VECTOR(tmp[0], t, tmp[0]);
+        /* N = (N + 1) * 0.5 */
+        VEC3_ADDS(tmp[0], 1, tmp[0]);
+        VEC3_MULS(tmp[0], 0.5, tmp[0]);
         return tmp[0];
     }
 

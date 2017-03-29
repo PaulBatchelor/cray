@@ -28,6 +28,10 @@ typedef struct {
     (OUT).x = (V).x * (S);\
     (OUT).y = (V).y * (S);\
     (OUT).z = (V).z * (S);
+#define VEC3_ADDS(V, S, OUT) \
+    (OUT).x = (V).x + S;\
+    (OUT).y = (V).y + S;\
+    (OUT).z = (V).z + S;
 #define VEC3_LENGTH(V, OUT)\
     (OUT) = sqrt((V).x*(V).x + (V).y*(V).y + (V).z*(V).z);
 #define VEC3_UNIT_VECTOR(V, TMP, OUT)\
