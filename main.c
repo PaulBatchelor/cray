@@ -10,6 +10,20 @@
 #include "camera.h"
 #include "rand.h"
 
+static vec3 random_in_unit_sphere() {
+    vec3 p;
+    vec3 tmp[2];
+    do {
+        VEC3_SET(tmp[0], cray_rand(), cray_rand(), cray_rand());
+        VEC3_MULS(tmp[0], 2.0, tmp[0]);
+
+        VEC3_SET(tmp[1], 1, 1, 1);
+        VEC3_SUB(tmp[0], tmp[1], p);
+    } while(VEC3_SQUARED_LENGTH(p) >= 1.0);
+
+    return p;
+}
+
 static vec3 color(cray_ray *r, cray_hitablelist *world)
 {
     vec3 unit_direction;
@@ -17,8 +31,18 @@ static vec3 color(cray_ray *r, cray_hitablelist *world)
     float t;
     cray_hitable rec;
 
-    if(cray_hitablelist_hit(world, r, 0.0, FLT_MAX, &rec)) {
-        VEC3_ADDS(rec.normal, 1.0, tmp[0]);
+    if(cray_hitablelist_hit(world, r, 0.001, FLT_MAX, &rec)) {
+        /* target = rec.p + rec.normal + random_in_unit_sphere() */
+        VEC3_ADD(rec.p, rec.normal, tmp[0]);
+        tmp[1] = random_in_unit_sphere();
+        VEC3_ADD(tmp[0], tmp[1], tmp[0]);
+
+        /* target - rec.p */
+        VEC3_SUB(tmp[0], rec.p, tmp[1]);
+
+        RAY_SET(*r, rec.p, tmp[1]);
+        
+        tmp[0] = color(r, world);
         VEC3_MULS(tmp[0], 0.5, tmp[0]);
         return tmp[0];
     } else {
@@ -99,6 +123,7 @@ int main()
             }
 
             VEC3_DIVS(col, (CRAYFLT)ns, col);
+            VEC3_SQRT(col, col);
 
             /* lower_left_corner + u*horizontal + v*vertical */
             /*
@@ -109,6 +134,7 @@ int main()
 
             RAY_SET(r, origin, tmp[0]);
             */
+
 
 
             ir = (int)(255.99 * col.x);
