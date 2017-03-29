@@ -4,11 +4,31 @@
 #include "vec3.h"
 #include "ray.h"
 
+static int hit_sphere(const vec3 *center, float radius, cray_ray *r)
+{
+    vec3 oc;
+    float a, b, c;
+    float discriminant;
+
+    VEC3_SUB(cray_ray_origin(r), *center, oc);
+    a = VEC3_DOT(cray_ray_direction(r), cray_ray_direction(r));
+    b = 2.0 * VEC3_DOT(oc, cray_ray_direction(r));
+    c = VEC3_DOT(oc, oc) - radius * radius;
+    discriminant = b*b - 4*a*c;
+    return (discriminant > 0);
+}
+
 static vec3 color(cray_ray *r)
 {
     vec3 unit_direction;
     vec3 tmp[2];
     float t;
+
+    VEC3_SET(tmp[0], 0, 0, -1);
+    if(hit_sphere(&tmp[0], 0.5, r)) {
+        VEC3_SET(tmp[0], 1, 0, 0);
+        return tmp[0];
+    }
 
     /* use t as tmp variable before it is used */
     VEC3_UNIT_VECTOR(cray_ray_direction(r), t, unit_direction);

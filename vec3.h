@@ -16,6 +16,10 @@ typedef struct {
     (OUT).x = (V1).x + (V2).x;\
     (OUT).y = (V1).y + (V2).y;\
     (OUT).z = (V1).z + (V2).z;
+#define VEC3_SUB(V2, V1, OUT) \
+    (OUT).x = (V2).x - (V1).x;\
+    (OUT).y = (V2).y - (V1).y;\
+    (OUT).z = (V2).z - (V1).z;
 #define VEC3_DIVS(V, S, OUT)\
     (OUT).x = (V).x / (S);\
     (OUT).y = (V).y / (S);\
@@ -29,6 +33,6 @@ typedef struct {
 #define VEC3_UNIT_VECTOR(V, TMP, OUT)\
     VEC3_LENGTH(V, TMP);\
     VEC3_DIVS(V, TMP, OUT);
-
+#define VEC3_DOT(A, B) ((A).x*(B).x + (A).y*(B).y + (A).z*(B).z)
 
 #endif
