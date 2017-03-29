@@ -3,11 +3,15 @@
 typedef struct {
     vec3 center;
     CRAYFLT radius;
+    cray_material *mat;
 } cray_sphere;
 
 cray_sphere * cray_to_sphere(cray_object *obj);
 
-void cray_sphere_init(cray_sphere *sphere, vec3 *center, CRAYFLT r);
+void cray_sphere_init(cray_sphere *sphere, 
+    vec3 *center, 
+    CRAYFLT r, 
+    cray_material *mat);
 
 void cray_sphere_mk_obj(cray_sphere *sphere, cray_object *obj);
 

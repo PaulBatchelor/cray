@@ -39,6 +39,7 @@ int cray_sphere_hit(cray_object *obj,
             VEC3_SUB(rec->p, sphere->center, oc);
             VEC3_DIVS(oc, sphere->radius, oc);
             rec->normal = oc;
+            rec->mat = sphere->mat;
             return 1;
         }
         temp = (-b + cray_sqrtf(b*b-a*c)) / (CRAYFLT)a;
@@ -50,6 +51,7 @@ int cray_sphere_hit(cray_object *obj,
             VEC3_SUB(rec->p, sphere->center, oc);
             VEC3_DIVS(oc, sphere->radius, oc);
             rec->normal = oc;
+            rec->mat = sphere->mat;
             return 1;
         }
     } 
@@ -57,10 +59,14 @@ int cray_sphere_hit(cray_object *obj,
     return 0;
 }
 
-void cray_sphere_init(cray_sphere *sphere, vec3 *center, CRAYFLT r)
+void cray_sphere_init(cray_sphere *sphere, 
+    vec3 *center, 
+    CRAYFLT r, 
+    cray_material *mat)
 {
     sphere->center = *center;
     sphere->radius = r;
+    sphere->mat = mat;
 }
 
 void cray_sphere_mk_obj(cray_sphere *sphere, cray_object *obj)

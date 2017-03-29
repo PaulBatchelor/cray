@@ -44,6 +44,9 @@ typedef struct {
 #define VEC3_SQRT(V, OUT)\
     (OUT).x = cray_sqrtf((V).x);\
     (OUT).y = cray_sqrtf((V).y);\
-    (OUT).z = cray_sqrtf((V).z);\
-
+    (OUT).z = cray_sqrtf((V).z);
+#define VEC3_MUL(V1, V2, OUT)\
+    (OUT).x = (V1).x * (V2).x;\
+    (OUT).y = (V1).y * (V2).y;\
+    (OUT).z = (V1).z * (V2).z;
 #endif
