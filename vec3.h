@@ -1,5 +1,6 @@
 #ifndef VEC3H
 #define VEC3H
+#include "sqrtf.h"
 
 #ifndef CRAYFLT
 #define CRAYFLT float
@@ -33,7 +34,7 @@ typedef struct {
     (OUT).y = (V).y + S;\
     (OUT).z = (V).z + S;
 #define VEC3_LENGTH(V, OUT)\
-    (OUT) = sqrtf((V).x*(V).x + (V).y*(V).y + (V).z*(V).z);
+    (OUT) = cray_sqrtf((V).x*(V).x + (V).y*(V).y + (V).z*(V).z);
 #define VEC3_UNIT_VECTOR(V, TMP, OUT)\
     VEC3_LENGTH(V, TMP);\
     VEC3_DIVS(V, TMP, OUT);

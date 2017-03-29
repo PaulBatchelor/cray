@@ -1,9 +1,9 @@
+#include <stdio.h>
 #include <math.h>
 #include "vec3.h"
 #include "ray.h"
 #include "hitable.h"
 #include "sphere.h"
-
 
 cray_sphere * cray_to_sphere(cray_object *obj)
 {
@@ -20,7 +20,6 @@ int cray_sphere_hit(cray_object *obj,
     CRAYFLT a, b, c;
     CRAYFLT discriminant;
     CRAYFLT temp;
-    CRAYFLT foo;
     cray_sphere *sphere;
 
     sphere = cray_to_sphere(obj);
@@ -32,7 +31,7 @@ int cray_sphere_hit(cray_object *obj,
     discriminant = b*b - a*c;
 
     if(discriminant > 0) {
-        temp = (-b - sqrtf(discriminant)) / a;
+        temp = (-b - cray_sqrtf(discriminant)) / a;
         if(temp < t_max && temp > t_min) {
             rec->t = temp;
             rec->p = cray_ray_point_at_param(r, rec->t);
@@ -47,7 +46,7 @@ int cray_sphere_hit(cray_object *obj,
             rec->normal = oc;
             return 1;
         }
-        temp = (-b + sqrtf(b*b-a*c)) / (CRAYFLT)a;
+        temp = (-b + cray_sqrtf(b*b-a*c)) / (CRAYFLT)a;
         if(temp < t_max && temp > t_min) {
             rec->t = temp;
             rec->p = cray_ray_point_at_param(r, rec->t);
