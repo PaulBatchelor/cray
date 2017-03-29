@@ -1,68 +1,49 @@
+#include <float.h>
 #include <stdio.h>
 #include <math.h>
 
 #include "vec3.h"
 #include "ray.h"
+#include "hitable.h"
+#include "hitablelist.h"
+#include "sphere.h"
 
-static float hit_sphere(const vec3 *center, float radius, cray_ray *r)
-{
-    vec3 oc;
-    float a, b, c;
-    float discriminant;
+static int g_i = 0;
+static int g_j = 0;
 
-    VEC3_SUB(cray_ray_origin(r), *center, oc);
-    a = VEC3_DOT(cray_ray_direction(r), cray_ray_direction(r));
-    b = 2.0 * VEC3_DOT(oc, cray_ray_direction(r));
-    c = VEC3_DOT(oc, oc) - radius * radius;
-    discriminant = b*b - 4*a*c;
-    if(discriminant < 0) {
-        return -1;
-    } else {
-        return (-b - sqrt(discriminant)) / (2.0*a);
-    }
-}
-
-static vec3 color(cray_ray *r)
+static vec3 color(cray_ray *r, cray_hitablelist *world)
 {
     vec3 unit_direction;
     vec3 tmp[2];
     float t;
+    cray_hitable rec;
 
-    VEC3_SET(tmp[0], 0, 0, -1);
-
-    t = hit_sphere(&tmp[0], 0.5, r);
-
-    if(t > 0.0) {
-        /* N = unit_vector(r.point_at_parameter(t) - vec3(0, 0, -1)); */
-        VEC3_SUB(cray_ray_point_at_param(r, t), tmp[0], tmp[0]);
-        /* 't' is not longer needed, so use it as tmp variable  */
-        VEC3_UNIT_VECTOR(tmp[0], t, tmp[0]);
-
-        /* N = (N + 1) * 0.5 */
-        VEC3_ADDS(tmp[0], 1, tmp[0]);
+    if(cray_hitablelist_hit(world, r, 0.0, FLT_MAX, &rec)) {
+        VEC3_ADDS(rec.normal, 1.0, tmp[0]);
         VEC3_MULS(tmp[0], 0.5, tmp[0]);
+        /* if(tmp[0].z < 0) printf("PROBLEM!\n"); */
         return tmp[0];
+    } else {
+
+        VEC3_UNIT_VECTOR(cray_ray_direction(r), t, unit_direction);
+
+        t = 0.5*(unit_direction.y + 1.0);
+
+        /* v1 = (1.0 - t) * vec3(1.0, 1.0, 1.0) */
+        VEC3_SET(tmp[0], 1.0, 1.0, 1.0);
+        VEC3_MULS(tmp[0], (1.0 - t), tmp[0]);
+
+        /* v2 = t * vec3(0.5, 0.7, 1.0) */
+        VEC3_SET(tmp[1], 0.5, 0.7, 1.0);
+        VEC3_MULS(tmp[1], t, tmp[1]);
+
+        /* reuse unit_direction variable */
+        /* unit_direction = v1 + v2 */
+
+        VEC3_ADD(tmp[0], tmp[1], unit_direction);
+
+        return unit_direction;
     }
-
-    /* use t as tmp variable before it is used */
-    VEC3_UNIT_VECTOR(cray_ray_direction(r), t, unit_direction);
-
-    t = 0.5*(unit_direction.y + 1.0);
-
-    /* v1 = (1.0 - t) * vec3(1.0, 1.0, 1.0) */
-    VEC3_SET(tmp[0], 1.0, 1.0, 1.0);
-    VEC3_MULS(tmp[0], (1.0 - t), tmp[0]);
-
-    /* v2 = t * vec3(0.5, 0.7, 1.0) */
-    VEC3_SET(tmp[1], 0.5, 0.7, 1.0);
-    VEC3_MULS(tmp[1], t, tmp[1]);
-
-    /* reuse unit_direction variable */
-    /* unit_direction = v1 + v2 */
-
-    VEC3_ADD(tmp[0], tmp[1], unit_direction);
-
-    return unit_direction;
 }
 
 int main()
@@ -81,9 +62,14 @@ int main()
     vec3 tmp[2];
     cray_ray r;
     CRAYFLT u, v;
+    cray_sphere sphere[2];
+    cray_object obj[2];
+    cray_object *pobj[2];
+    cray_hitablelist world;
 
     nx = 200;
     ny = 100;
+
 
     fp = fopen("out.ppm", "w");
 
@@ -92,10 +78,24 @@ int main()
     VEC3_SET(vertical, 0.0, 2.0, 0.0);
     VEC3_SET(origin, 0.0, 0.0, 0.0);
 
+    VEC3_SET(tmp[0], 0, 0, -1);
+    cray_sphere_init(&sphere[0], &tmp[0], 0.5);
+    VEC3_SET(tmp[0], 0, -100.5, -1);
+    cray_sphere_init(&sphere[1], &tmp[0], 100);
+
+    cray_sphere_mk_obj(&sphere[0], &obj[0]);
+    cray_sphere_mk_obj(&sphere[1], &obj[1]);
+
+    pobj[0] = &obj[0];
+    pobj[1] = &obj[1];
+    cray_hitablelist_init(&world, pobj, 2);
+
     fprintf(fp, "P3\n%d %d\n255\n", nx, ny);
 
     for(j = ny -1; j >= 0; j--) {
         for(i = 0; i < nx; i++) {
+            g_i = i;
+            g_j = j;
             u = (CRAYFLT) i / (CRAYFLT)nx; 
             v = (CRAYFLT) j / (CRAYFLT)ny;
 
@@ -108,7 +108,7 @@ int main()
 
             RAY_SET(r, origin, tmp[0]);
 
-            col = color(&r);
+            col = color(&r, &world);
 
             ir = (int)(255.99 * col.x);
             ig = (int)(255.99 * col.y);

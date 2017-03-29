@@ -1,6 +1,6 @@
 .PHONY: render
 
-CFLAGS=-ansi -Wall -Wpedantic
+CFLAGS=-ansi -Wall -Wpedantic -g
 LDFLAGS=-lm
 OBJ=main.o ray.o sphere.o hitablelist.o
 

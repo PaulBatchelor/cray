@@ -6,6 +6,10 @@ typedef struct {
     int list_size;
 } cray_hitablelist;
 
+void cray_hitablelist_init(cray_hitablelist *hitlist, 
+        cray_object **list, 
+        int list_size);
+
 int cray_hitablelist_hit(cray_hitablelist *hitlist,
         cray_ray *ray, 
         CRAYFLT t_min,

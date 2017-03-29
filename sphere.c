@@ -23,30 +23,40 @@ int cray_sphere_hit(cray_object *obj,
     cray_sphere *sphere;
 
     sphere = cray_to_sphere(obj);
+
     VEC3_SUB(cray_ray_origin(r), sphere->center, oc);
     a = VEC3_DOT(cray_ray_direction(r), cray_ray_direction(r));
-    b = 2.0 * VEC3_DOT(oc, cray_ray_direction(r));
+    b = VEC3_DOT(oc, cray_ray_direction(r));
     c = VEC3_DOT(oc, oc) - sphere->radius*sphere->radius;
     discriminant = b*b - a*c;
-    if(discriminant < 0) {
-        temp = (-b - sqrt(discriminant)) / a;
+
+    if(discriminant > 0) {
+        /* temp = (-b - sqrt(discriminant)) / (CRAYFLT)a; */
+        temp = (-b - sqrtf(b*b-a*c)) / (CRAYFLT)a;
         if(temp < t_max && temp > t_min) {
             rec->t = temp;
             rec->p = cray_ray_point_at_param(r, rec->t);
-            /* rec->p - center / radius */
+            /* (rec->p - center) / radius */
             /* reuse oc variable */
             VEC3_SUB(rec->p, sphere->center, oc);
+            if(fabs(oc.z) > sphere->radius) {
+                printf("0: we got a problem %g! radius %g temp %g\n", 
+                        oc.z, sphere->radius, temp);
+            }
             VEC3_DIVS(oc, sphere->radius, oc);
+            rec->normal = oc;
             return 1;
         }
-        temp = (-b + sqrt(discriminant)) / a;
+        temp = (-b + sqrtf(b*b-a*c)) / (CRAYFLT)a;
         if(temp < t_max && temp > t_min) {
             rec->t = temp;
             rec->p = cray_ray_point_at_param(r, rec->t);
-            /* rec->p - center / radius */
+            /* (rec->p - center) / radius */
             /* reuse oc variable */
             VEC3_SUB(rec->p, sphere->center, oc);
+            /* if(oc.z < -1) printf("1: we got a problem %g!\n", oc.z); */
             VEC3_DIVS(oc, sphere->radius, oc);
+            rec->normal = oc;
             return 1;
         }
     } 
