@@ -1,7 +1,8 @@
 .PHONY: render
 
 CFLAGS=-ansi -Wall -Wpedantic
-OBJ=main.o
+LDFLAGS=-lm
+OBJ=main.o ray.o
 
 default: cray
 
@@ -9,7 +10,7 @@ default: cray
 	$(CC) $(CFLAGS) -c $< -o $@
 
 cray: $(OBJ)
-	$(CC) $(OBJ) -o $@
+	$(CC) $(OBJ) -o $@ $(LDFLAGS)
 
 render: cray
 	./cray 
