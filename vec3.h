@@ -11,6 +11,6 @@ typedef struct {
     CRAYFLT z;
 } vec3;
 
-# define VEC3_SET(V, X, Y, Z) (V).x = (X); (V).y = (Y); (V).z = (Z);
+#define VEC3_SET(V, X, Y, Z) (V).x = (X); (V).y = (Y); (V).z = (Z);
 
 #endif
