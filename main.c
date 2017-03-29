@@ -1,14 +1,16 @@
 #include <stdio.h>
 
+#include "vec3.h"
+
 int main()
 {
     int nx;
     int ny;
     int j;
     int i;
-    float r, g, b;
     int ir, ig, ib;
     FILE *fp;
+    vec3 col;
 
     nx = 200;
     ny = 100;
@@ -19,12 +21,13 @@ int main()
 
     for(j = ny -1; j >= 0; j--) {
         for(i = 0; i < nx; i++) {
-            r = (float)i / (float)nx;
-            g = (float)j / (float)ny;
-            b = 0.2;
-            ir = (int)(255.99 * r);
-            ig = (int)(255.99 * g);
-            ib = (int)(255.99 * b);
+            VEC3_SET(col, 
+                (CRAYFLT) i / (CRAYFLT)nx, 
+                (CRAYFLT) j / (CRAYFLT)ny,
+                0.2);
+            ir = (int)(255.99 * col.x);
+            ig = (int)(255.99 * col.y);
+            ib = (int)(255.99 * col.z);
             fprintf(fp, "%d %d %d\n", ir, ig, ib);
         }
     }
