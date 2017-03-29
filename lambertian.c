@@ -42,7 +42,7 @@ static int lambertian (cray_material *m,
     return 1;
 }
 
-void cray_lambertian_make(cray_lambertian *l)
+void cray_lambertian_init(cray_lambertian *l)
 {
     cray_material_init(&l->mat);
     l->mat.type = CRAY_LAMBERTIAN;

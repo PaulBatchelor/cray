@@ -87,10 +87,10 @@ int main()
 
     fp = fopen("out.ppm", "w");
 
-    cray_lambertian_make(&lam[0]);
+    cray_lambertian_init(&lam[0]);
     cray_lambertian_color(&lam[0], 0.8, 0.3, 0.3);
     
-    cray_lambertian_make(&lam[1]);
+    cray_lambertian_init(&lam[1]);
     cray_lambertian_color(&lam[1], 0.8, 0.8, 0.0);
 
     VEC3_SET(tmp[0], 0, 0, -1);
