@@ -2,7 +2,7 @@
 
 CFLAGS=-ansi -Wall -Wpedantic
 LDFLAGS=-lm
-OBJ=main.o ray.o
+OBJ=main.o ray.o sphere.o hitablelist.o
 
 default: cray
 
