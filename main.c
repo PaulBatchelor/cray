@@ -7,9 +7,8 @@
 #include "hitable.h"
 #include "hitablelist.h"
 #include "sphere.h"
-
-static int g_i = 0;
-static int g_j = 0;
+#include "camera.h"
+#include "rand.h"
 
 static vec3 color(cray_ray *r, cray_hitablelist *world)
 {
@@ -49,15 +48,13 @@ int main()
 {
     int nx;
     int ny;
+    int ns;
     int j;
     int i;
+    int s;
     int ir, ig, ib;
     FILE *fp;
     vec3 col;
-    vec3 lower_left_corner;
-    vec3 horizontal;
-    vec3 vertical;
-    vec3 origin;
     vec3 tmp[2];
     cray_ray r;
     CRAYFLT u, v;
@@ -65,17 +62,14 @@ int main()
     cray_object obj[2];
     cray_object *pobj[2];
     cray_hitablelist world;
+    cray_camera cam;
 
     nx = 200;
     ny = 100;
+    ns = 100;
 
 
     fp = fopen("out.ppm", "w");
-
-    VEC3_SET(lower_left_corner, -2.0, -1.0, -1.0);
-    VEC3_SET(horizontal, 4.0, 0.0, 0.0);
-    VEC3_SET(vertical, 0.0, 2.0, 0.0);
-    VEC3_SET(origin, 0.0, 0.0, 0.0);
 
     VEC3_SET(tmp[0], 0, 0, -1);
     cray_sphere_init(&sphere[0], &tmp[0], 0.5);
@@ -89,25 +83,33 @@ int main()
     pobj[1] = &obj[1];
     cray_hitablelist_init(&world, pobj, 2);
 
+
+    cray_camera_init(&cam);
     fprintf(fp, "P3\n%d %d\n255\n", nx, ny);
 
     for(j = ny -1; j >= 0; j--) {
         for(i = 0; i < nx; i++) {
-            g_i = i;
-            g_j = j;
-            u = (CRAYFLT) i / (CRAYFLT)nx; 
-            v = (CRAYFLT) j / (CRAYFLT)ny;
+            VEC3_SET(col, 0, 0, 0);
+            for(s = 0; s < ns; s++) {
+                u = (CRAYFLT) (i + cray_rand()) / (CRAYFLT)nx; 
+                v = (CRAYFLT) (j + cray_rand()) / (CRAYFLT)ny;
+                r = cray_camera_get_ray(&cam, u, v);
+                tmp[0] = color(&r, &world);
+                VEC3_ADD(col, tmp[0], col);
+            }
 
+            VEC3_DIVS(col, (CRAYFLT)ns, col);
 
             /* lower_left_corner + u*horizontal + v*vertical */
+            /*
             VEC3_MULS(horizontal, u, tmp[0]);
             VEC3_MULS(vertical, v, tmp[1]);
             VEC3_ADD(tmp[0], tmp[1], tmp[0]);
             VEC3_ADD(lower_left_corner, tmp[0], tmp[0]);
 
             RAY_SET(r, origin, tmp[0]);
+            */
 
-            col = color(&r, &world);
 
             ir = (int)(255.99 * col.x);
             ig = (int)(255.99 * col.y);
