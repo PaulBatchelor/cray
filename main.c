@@ -194,15 +194,21 @@ int main()
     cray_dielectric_init(&di[1]);
     cray_dielectric_refraction(&di[1], 0.7);
 
-    VEC3_SET(tmp[0], 0, 0, -1);
-    cray_sphere_init(&sphere[0], &tmp[0], 0.5, &lam[0].mat);
-    VEC3_SET(tmp[0], 0, -100.5, -1);
-    cray_sphere_init(&sphere[1], &tmp[0], 100, &lam[1].mat);
+    cray_sphere_init(&sphere[0], &lam[0].mat);
+    cray_sphere_pos(&sphere[0], 0, 0, -1);
+    cray_sphere_radius(&sphere[0], 0.5);
+
+    cray_sphere_init(&sphere[1], &lam[1].mat);
+    cray_sphere_pos(&sphere[1], 0, -100.5, -1);
+    cray_sphere_radius(&sphere[1], 100);
     
-    VEC3_SET(tmp[0], -1, 0, -1);
-    cray_sphere_init(&sphere[2], &tmp[0], 0.5, &met[0].mat);
-    VEC3_SET(tmp[0], 1, 0, -1);
-    cray_sphere_init(&sphere[3], &tmp[0], 0.5, &di[0].mat);
+    cray_sphere_init(&sphere[2], &met[0].mat);
+    cray_sphere_pos(&sphere[2], -1, 0, -1);
+    cray_sphere_radius(&sphere[2], 0.5);
+
+    cray_sphere_init(&sphere[3], &di[0].mat);
+    cray_sphere_pos(&sphere[3], 1, 0, -1);
+    cray_sphere_radius(&sphere[3], 0.5);
 
     cray_hitablelist_init(world, pobj, 4);
     cray_hitablelist_append(world, &sphere[0].obj);

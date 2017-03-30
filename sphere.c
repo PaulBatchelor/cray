@@ -59,16 +59,23 @@ int cray_sphere_hit(cray_object *obj,
     return 0;
 }
 
-void cray_sphere_init(cray_sphere *sphere, 
-    vec3 *center, 
-    CRAYFLT r, 
-    cray_material *mat)
+void cray_sphere_init(cray_sphere *sphere, cray_material *mat)
 {
-    sphere->center = *center;
-    sphere->radius = r;
     sphere->mat = mat;
 
+    cray_sphere_pos(sphere, 0, 0, 0);
+    cray_sphere_radius(sphere, 0.5);
     sphere->obj.f = cray_sphere_hit;
     sphere->obj.type = CRAY_SPHERE;
     sphere->obj.ud = sphere;
+}
+
+void cray_sphere_pos(cray_sphere *sphere, CRAYFLT x, CRAYFLT y, CRAYFLT z)
+{
+    VEC3_SET(sphere->center, x, y, z);
+}
+
+void cray_sphere_radius(cray_sphere *sphere, CRAYFLT r)
+{
+    sphere->radius = r;
 }
