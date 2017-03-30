@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include <math.h>
 #include "vec3.h"
 #include "ray.h"
@@ -7,8 +6,6 @@
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #endif
-
-#define VEC3_PRINT(V) printf("%g %g %g\n", (V).x, (V).y, (V).z);
 
 void cray_camera_init(cray_camera *cam)
 {
@@ -43,23 +40,16 @@ void cray_camera_setup(cray_camera *cam,
     vec3 tmp[2];
     CRAYFLT var;
 
-    VEC3_PRINT(lookfrom);
-    VEC3_PRINT(lookat);
-    VEC3_PRINT(vup);
     cam->origin = lookfrom;
     theta = vfov * M_PI / 180.0;
     half_height = tan(theta / 2.0);
     half_width = aspect * half_height;
 
     VEC3_SUB(lookfrom, lookat, w);
-    VEC3_PRINT(w);
     VEC3_UNIT_VECTOR(w, var, w);
-    VEC3_PRINT(w);
 
     VEC3_CROSS(vup, w, u);
-    VEC3_PRINT(u);
     VEC3_UNIT_VECTOR(u, var, u);
-    VEC3_PRINT(u);
 
     VEC3_CROSS(w, u, v);
 
