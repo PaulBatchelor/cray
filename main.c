@@ -88,7 +88,7 @@ static void render(cray_hitablelist *world,
     int nx, int ny, int ns, 
     int offx, int offy,
     int w, int h,
-    CRAYFLT *buf)
+    CRAYFLT *buf, int verbose)
 {
     int i, j, s;
     vec3 col;
@@ -102,7 +102,7 @@ static void render(cray_hitablelist *world,
     int xend, yend;
 
     step = 0;
-    size = nx * ny;
+    size = w * h;
 
 
     xstart = offx;
@@ -132,7 +132,7 @@ static void render(cray_hitablelist *world,
 
             step++;
 
-            if(step % 100 == 0) {
+            if(verbose && step % 100 == 0) {
                 fprintf(stderr, "%06d/%06d\r", step, size);
             }
         }
@@ -144,6 +144,7 @@ int main()
     int nx;
     int ny;
     int ns;
+    int x, y;
     vec3 tmp[2];
     cray_sphere sphere[5];
     cray_object *pobj[5];
@@ -154,8 +155,8 @@ int main()
     cray_metal met[2];
     CRAYFLT *buf;
 
-    nx = 200;
-    ny = 100;
+    nx = 8 * 32;
+    ny = 4 * 32;
     ns = 100;
 
     buf = calloc(sizeof(CRAYFLT), nx * ny * 3);
@@ -208,7 +209,13 @@ int main()
     cray_camera_focus_dist(&cam, cray_camera_dist(&cam));
     cray_camera_update(&cam);
 
-    render(&world, &cam, nx, ny, ns, 0, 0, nx, ny, buf);
+    for(y = 0; y < 4; y++) {
+        for(x = 0; x < 8; x++) {
+            printf("\nx: %d y: %d:\n", x, y);
+            render(&world, &cam, nx, ny, ns, x*32, y*32, 32, 32, buf, 1);
+        }
+    }
+
     write_ppm("out.ppm", nx, ny, buf);
 
     free(buf);
