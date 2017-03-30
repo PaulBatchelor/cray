@@ -11,6 +11,10 @@
 #include "rand.h"
 #include "material.h"
 
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
 static vec3 color(cray_ray *r, cray_hitablelist *world, int depth)
 {
     vec3 unit_direction;
@@ -79,6 +83,7 @@ int main()
     cray_dielectric di[2];
     cray_metal met[2];
     unsigned int step;
+    CRAYFLT R;
 
     nx = 200;
     ny = 100;
@@ -88,11 +93,17 @@ int main()
     size = nx * ny;
 
     fp = fopen("out.ppm", "w");
-
+/*
     cray_lambertian_init(&lam[0]);
     cray_lambertian_color(&lam[0], 0.8, 0.3, 0.3);
     cray_lambertian_init(&lam[1]);
     cray_lambertian_color(&lam[1], 0.8, 0.8, 0.0);
+*/
+
+    cray_lambertian_init(&lam[0]);
+    cray_lambertian_color(&lam[0], 0.0, 0.0, 1.0);
+    cray_lambertian_init(&lam[1]);
+    cray_lambertian_color(&lam[1], 1.0, 0.0, 0.0);
 
     cray_metal_init(&met[0]);
     cray_metal_color(&met[0], 0.8, 0.6, 0.2);
@@ -106,10 +117,18 @@ int main()
     cray_dielectric_init(&di[1]);
     cray_dielectric_refraction(&di[1], 1.5);
 
+    R = cos(M_PI / 4.0);
+    /*
     VEC3_SET(tmp[0], 0, 0, -1);
     cray_sphere_init(&sphere[0], &tmp[0], 0.5, &lam[0].mat);
     VEC3_SET(tmp[0], 0, -100.5, -1);
     cray_sphere_init(&sphere[1], &tmp[0], 100, &lam[1].mat);
+    */
+    
+    VEC3_SET(tmp[0], -R, 0, -1);
+    cray_sphere_init(&sphere[0], &tmp[0], R, &lam[0].mat);
+    VEC3_SET(tmp[0], R, 0, -1);
+    cray_sphere_init(&sphere[1], &tmp[0], R, &lam[1].mat);
     
     VEC3_SET(tmp[0], 1, 0, -1);
     cray_sphere_init(&sphere[2], &tmp[0], 0.5, &met[0].mat);
@@ -130,11 +149,13 @@ int main()
     pobj[2] = &obj[2];
     pobj[3] = &obj[3];
     pobj[4] = &obj[4];
-
+/*
     cray_hitablelist_init(&world, pobj, 5);
-
-
+*/
+    cray_hitablelist_init(&world, pobj, 2);
     cray_camera_init(&cam);
+    cray_camera_setup(&cam, 90, (float)nx / (float)ny);
+
     fprintf(fp, "P3\n%d %d\n255\n", nx, ny);
 
     for(j = ny -1; j >= 0; j--) {

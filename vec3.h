@@ -47,4 +47,8 @@ typedef struct {
     (OUT).x = (V1).x * (V2).x;\
     (OUT).y = (V1).y * (V2).y;\
     (OUT).z = (V1).z * (V2).z;
+#define VEC3_CROSS(V1, V2, OUT)\
+    (OUT).x = (V1).y*(V2).z - (V1).z*(V2).y;\
+    (OUT).y = -((V1).x*(V2).z - (V1).z*(V2).x);\
+    (OUT).z = (V1).x*(V2).y - (V1).y*(V2).x;
 #endif
