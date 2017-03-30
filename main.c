@@ -167,18 +167,6 @@ int main()
             VEC3_DIVS(col, (CRAYFLT)ns, col);
             VEC3_SQRT(col, col);
 
-            /* lower_left_corner + u*horizontal + v*vertical */
-            /*
-            VEC3_MULS(horizontal, u, tmp[0]);
-            VEC3_MULS(vertical, v, tmp[1]);
-            VEC3_ADD(tmp[0], tmp[1], tmp[0]);
-            VEC3_ADD(lower_left_corner, tmp[0], tmp[0]);
-
-            RAY_SET(r, origin, tmp[0]);
-            */
-
-
-
             ir = (int)(255.99 * col.x);
             ig = (int)(255.99 * col.y);
             ib = (int)(255.99 * col.z);
