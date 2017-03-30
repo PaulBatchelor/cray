@@ -85,7 +85,10 @@ static void write_ppm(const char *filename, int width, int height, CRAYFLT *buf)
 
 static void render(cray_hitablelist *world, 
     cray_camera *cam, 
-    int nx, int ny, int ns, CRAYFLT *buf)
+    int nx, int ny, int ns, 
+    int offx, int offy,
+    int w, int h,
+    CRAYFLT *buf)
 {
     int i, j, s;
     vec3 col;
@@ -95,12 +98,21 @@ static void render(cray_hitablelist *world,
     int step;
     int size;
     unsigned int pos;
+    int xstart, ystart;
+    int xend, yend;
 
     step = 0;
     size = nx * ny;
 
-    for(j = ny -1; j >= 0; j--) {
-        for(i = 0; i < nx; i++) {
+
+    xstart = offx;
+    xend = offx + w;
+    
+    ystart = (ny - 1) - offy;
+    yend = (ny - h) - offy;
+
+    for(j = ystart; j >= yend; j--) {
+        for(i = xstart; i < xend; i++) {
             VEC3_SET(col, 0, 0, 0);
             for(s = 0; s < ns; s++) {
                 u = (CRAYFLT) (i + cray_rand()) / (CRAYFLT)nx; 
@@ -196,7 +208,7 @@ int main()
     cray_camera_focus_dist(&cam, cray_camera_dist(&cam));
     cray_camera_update(&cam);
 
-    render(&world, &cam, nx, ny, ns, buf);
+    render(&world, &cam, nx, ny, ns, 0, 0, nx, ny, buf);
     write_ppm("out.ppm", nx, ny, buf);
 
     free(buf);
