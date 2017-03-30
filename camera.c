@@ -2,6 +2,7 @@
 #include "vec3.h"
 #include "ray.h"
 #include "camera.h"
+#include "rand.h"
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
@@ -15,6 +16,9 @@ cray_ray cray_camera_get_ray(cray_camera *cam, CRAYFLT s, CRAYFLT t)
 {
     cray_ray r;
     vec3 tmp[2];
+    vec3 rd;
+    vec3 offset;
+    CRAYFLT var;
 
     VEC3_MULS(cam->horizontal, s, tmp[0]);
     VEC3_MULS(cam->vertical, t, tmp[1]);
@@ -22,7 +26,17 @@ cray_ray cray_camera_get_ray(cray_camera *cam, CRAYFLT s, CRAYFLT t)
     VEC3_ADD(cam->lower_left_corner, tmp[0], tmp[0]);
     VEC3_SUB(tmp[0], cam->origin, tmp[0]);
 
-    RAY_SET(r, cam->origin, tmp[0]);
+    rd = random_in_unit_disk();
+    VEC3_MULS(rd, cam->lens_radius, rd);
+    var = rd.x;
+    VEC3_MULS(cam->u, var, tmp[1]);
+    var = rd.y;
+    VEC3_MULS(cam->v, var, rd);
+    VEC3_ADD(tmp[1], rd, offset);
+
+    VEC3_ADD(cam->origin, offset, tmp[1]);
+    VEC3_SUB(tmp[0], offset, tmp[0]);
+    RAY_SET(r, tmp[1], tmp[0]);
     return r;
 }
 
@@ -31,37 +45,43 @@ void cray_camera_setup(cray_camera *cam,
     vec3 lookat, 
     vec3 vup,
     CRAYFLT vfov, 
-    CRAYFLT aspect)
+    CRAYFLT aspect,
+    CRAYFLT aperture,
+    CRAYFLT focus_dist)
 {
     CRAYFLT theta;
     CRAYFLT half_height;
     CRAYFLT half_width;
-    vec3 u, v, w;
     vec3 tmp[2];
     CRAYFLT var;
+
+    cam->lens_radius = aperture / 2.0;
 
     cam->origin = lookfrom;
     theta = vfov * M_PI / 180.0;
     half_height = tan(theta / 2.0);
     half_width = aspect * half_height;
 
-    VEC3_SUB(lookfrom, lookat, w);
-    VEC3_UNIT_VECTOR(w, var, w);
+    VEC3_SUB(lookfrom, lookat, cam->w);
+    VEC3_UNIT_VECTOR(cam->w, var, cam->w);
 
-    VEC3_CROSS(vup, w, u);
-    VEC3_UNIT_VECTOR(u, var, u);
+    VEC3_CROSS(vup, cam->w, cam->u);
+    VEC3_UNIT_VECTOR(cam->u, var, cam->u);
 
-    VEC3_CROSS(w, u, v);
+    VEC3_CROSS(cam->w, cam->u, cam->v);
 
-    VEC3_MULS(u, half_width, tmp[0]);
-    VEC3_MULS(v, half_height, tmp[1]);
+    var = half_width * focus_dist;
+    VEC3_MULS(cam->u, var, tmp[0]);
+    var = half_height * focus_dist;
+    VEC3_MULS(cam->v, var, tmp[1]);
 
     VEC3_SUB(cam->origin, tmp[0], tmp[0]);
     VEC3_SUB(tmp[0], tmp[1], tmp[0]);
-    VEC3_SUB(tmp[0], w, cam->lower_left_corner);
+    VEC3_MULS(cam->w, focus_dist, tmp[1]);
+    VEC3_SUB(tmp[0], tmp[1], cam->lower_left_corner);
 
-    var = 2 * half_width;
-    VEC3_MULS(u, var, cam->horizontal);
-    var = 2 * half_height;
-    VEC3_MULS(v, var, cam->vertical);
+    var = 2 * half_width * focus_dist;
+    VEC3_MULS(cam->u, var, cam->horizontal);
+    var = 2 * half_height * focus_dist;
+    VEC3_MULS(cam->v, var, cam->vertical);
 }

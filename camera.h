@@ -5,6 +5,8 @@ typedef struct {
     vec3 horizontal;
     vec3 vertical;
     vec3 origin;
+    vec3 u, v, w;
+    CRAYFLT lens_radius;
 } cray_camera;
 
 void cray_camera_init(cray_camera *cam);
@@ -14,6 +16,8 @@ void cray_camera_setup(cray_camera *cam,
     vec3 lookat, 
     vec3 vup,
     CRAYFLT vfov, 
-    CRAYFLT aspect); 
+    CRAYFLT aspect,
+    CRAYFLT aperature,
+    CRAYFLT focus_dist);
     
 #endif

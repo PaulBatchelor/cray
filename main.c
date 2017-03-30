@@ -83,7 +83,8 @@ int main()
     cray_dielectric di[2];
     cray_metal met[2];
     unsigned int step;
-    CRAYFLT R;
+    CRAYFLT aperture;
+    CRAYFLT dist_to_focus;
 
     nx = 200;
     ny = 100;
@@ -138,10 +139,17 @@ int main()
 
     cray_hitablelist_init(&world, pobj, 5);
     cray_camera_init(&cam);
-    VEC3_SET(tmp[0], -2, 2, 1);
+    VEC3_SET(tmp[0], 3, 3, 2);
     VEC3_SET(tmp[1], 0, 0, -1);
+
+
+    VEC3_SUB(tmp[0], tmp[1], col);
+
+    dist_to_focus = VEC3_LENGTH(col);
+    aperture = 2.0;
     VEC3_SET(col, 0, 1, 0);
-    cray_camera_setup(&cam, tmp[0], tmp[1], col, 30, (float)nx / (float)ny);
+
+    cray_camera_setup(&cam, tmp[0], tmp[1], col, 20, (float)nx / (float)ny, aperture, dist_to_focus);
 
     fprintf(fp, "P3\n%d %d\n255\n", nx, ny);
 
