@@ -167,7 +167,7 @@ int main()
     cray_lambertian_init(&lam[0]);
     cray_lambertian_color(&lam[0], 0.8, 0.8, 0.0);
     cray_lambertian_init(&lam[1]);
-    cray_lambertian_color(&lam[1], 0.8, 0.8, 0.8);
+    cray_lambertian_color(&lam[1], 1.0, 1.0, 1.0);
 
     cray_metal_init(&met[0]);
     cray_metal_color(&met[0], 0.3, 0.3, 0.8);
