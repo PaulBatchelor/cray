@@ -1,6 +1,7 @@
 #include <float.h>
 #include <stdio.h>
 #include <math.h>
+#include <stdlib.h>
 
 #include "vec3.h"
 #include "ray.h"
@@ -59,25 +60,45 @@ static vec3 color(cray_ray *r, cray_hitablelist *world, int depth)
     return tmp[0];
 }
 
+static void write_ppm(const char *filename, int width, int height, CRAYFLT *buf)
+{
+    int x, y;
+    int r, g, b;
+    int pos;
+    FILE *fp;
+    fp = fopen("out.ppm", "w");
+    fprintf(fp, "P3\n%d %d\n255\n", width, height);
+
+    pos = 0;
+    for(y = height - 1; y >= 0; y--) {
+        for(x = 0; x < width; x++) {
+            pos = y * width * 3 + x * 3;
+            r = (int)(255.99 * buf[pos]);
+            g = (int)(255.99 * buf[pos + 1]);
+            b = (int)(255.99 * buf[pos + 2]);
+            fprintf(fp, "%d %d %d\n", r, g, b);
+        }
+    }
+
+    fclose(fp);
+}
+
 static void render(cray_hitablelist *world, 
     cray_camera *cam, 
-    int nx, int ny, int ns)
+    int nx, int ny, int ns, CRAYFLT *buf)
 {
-    FILE *fp;
     int i, j, s;
-    int ir, ig, ib;
     vec3 col;
     vec3 tmp;
     cray_ray r;
     CRAYFLT u, v;
     int step;
     int size;
+    unsigned int pos;
 
     step = 0;
     size = nx * ny;
-    fp = fopen("out.ppm", "w");
 
-    fprintf(fp, "P3\n%d %d\n255\n", nx, ny);
     for(j = ny -1; j >= 0; j--) {
         for(i = 0; i < nx; i++) {
             VEC3_SET(col, 0, 0, 0);
@@ -92,10 +113,11 @@ static void render(cray_hitablelist *world,
             VEC3_DIVS(col, (CRAYFLT)ns, col);
             VEC3_SQRT(col, col);
 
-            ir = (int)(255.99 * col.x);
-            ig = (int)(255.99 * col.y);
-            ib = (int)(255.99 * col.z);
-            fprintf(fp, "%d %d %d\n", ir, ig, ib);
+            pos = j * nx * 3 + i * 3;
+            buf[pos] = col.x;
+            buf[pos + 1] = col.y;
+            buf[pos + 2] = col.z;
+
             step++;
 
             if(step % 100 == 0) {
@@ -103,8 +125,6 @@ static void render(cray_hitablelist *world,
             }
         }
     }
-
-    fclose(fp);
 }
 
 int main()
@@ -120,10 +140,13 @@ int main()
     cray_lambertian lam[2];
     cray_dielectric di[2];
     cray_metal met[2];
+    CRAYFLT *buf;
 
     nx = 200;
     ny = 100;
     ns = 100;
+
+    buf = calloc(sizeof(CRAYFLT), nx * ny * 3);
 
     cray_lambertian_init(&lam[0]);
     cray_lambertian_color(&lam[0], 0.8, 0.3, 0.3);
@@ -173,6 +196,9 @@ int main()
     cray_camera_focus_dist(&cam, cray_camera_dist(&cam));
     cray_camera_update(&cam);
 
-    render(&world, &cam, nx, ny, ns);
+    render(&world, &cam, nx, ny, ns, buf);
+    write_ppm("out.ppm", nx, ny, buf);
+
+    free(buf);
     return 0;
 }
