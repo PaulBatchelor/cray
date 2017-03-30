@@ -58,7 +58,7 @@ static int dielectric(cray_material *m,
    
     d = m->ud;
 
-    VEC3_SET(*attenuation, 1.0, 1.0, 1.0);
+    *attenuation =  d->albedo;
 
     ray_dir = cray_ray_direction(r_in);
 
@@ -97,9 +97,15 @@ void cray_dielectric_init(cray_dielectric *d)
     d->mat.ud = d;
     d->mat.scatter = dielectric;
     d->ref_idx = 1.5;
+    VEC3_SET(d->albedo, 1.0, 1.0, 1.0);
 }
 
 void cray_dielectric_refraction(cray_dielectric *d, CRAYFLT ref_idx)
 {
     d->ref_idx = ref_idx;
+}
+
+void cray_dielectric_color(cray_dielectric *d, CRAYFLT r, CRAYFLT g, CRAYFLT b)
+{
+    VEC3_SET(d->albedo, r, g, b);
 }

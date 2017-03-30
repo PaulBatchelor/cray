@@ -145,6 +145,7 @@ int main()
     int ny;
     int ns;
     int x, y;
+    int bx, by;
     vec3 tmp[2];
     cray_sphere sphere[5];
     cray_object *pobj[5];
@@ -155,63 +156,62 @@ int main()
     cray_metal met[2];
     CRAYFLT *buf;
 
-    nx = 8 * 32;
-    ny = 4 * 32;
-    ns = 100;
+    bx = 8;
+    by = 8;
+    nx = bx * 32;
+    ny = by * 32;
+    ns = 200;
 
     buf = calloc(sizeof(CRAYFLT), nx * ny * 3);
 
     cray_lambertian_init(&lam[0]);
-    cray_lambertian_color(&lam[0], 0.8, 0.3, 0.3);
+    cray_lambertian_color(&lam[0], 0.8, 0.8, 0.0);
     cray_lambertian_init(&lam[1]);
-    cray_lambertian_color(&lam[1], 0.8, 0.8, 0.0);
+    cray_lambertian_color(&lam[1], 0.8, 0.8, 0.8);
 
     cray_metal_init(&met[0]);
-    cray_metal_color(&met[0], 0.8, 0.6, 0.2);
+    cray_metal_color(&met[0], 0.3, 0.3, 0.8);
     cray_metal_fuzz(&met[0], 0.1);
     cray_metal_init(&met[1]);
-    cray_metal_color(&met[1], 0.8, 0.8, 0.8);
+    cray_metal_color(&met[1], 0.3, 0.3, 0.8);
     cray_metal_fuzz(&met[1], 0.3);
 
     cray_dielectric_init(&di[0]);
-    cray_dielectric_refraction(&di[0], 1.5);
+    cray_dielectric_refraction(&di[0], 1.9);
+    cray_dielectric_color(&di[0], 1.0, 0.3, 0.3);
     cray_dielectric_init(&di[1]);
-    cray_dielectric_refraction(&di[1], 1.5);
+    cray_dielectric_refraction(&di[1], 0.7);
 
     VEC3_SET(tmp[0], 0, 0, -1);
     cray_sphere_init(&sphere[0], &tmp[0], 0.5, &lam[0].mat);
     VEC3_SET(tmp[0], 0, -100.5, -1);
     cray_sphere_init(&sphere[1], &tmp[0], 100, &lam[1].mat);
     
-    VEC3_SET(tmp[0], 1, 0, -1);
+    VEC3_SET(tmp[0], -1, 0, -1);
     cray_sphere_init(&sphere[2], &tmp[0], 0.5, &met[0].mat);
-    VEC3_SET(tmp[0], -1, 0, -1);
+    VEC3_SET(tmp[0], 1, 0, -1);
     cray_sphere_init(&sphere[3], &tmp[0], 0.5, &di[0].mat);
-    
-    VEC3_SET(tmp[0], -1, 0, -1);
-    cray_sphere_init(&sphere[4], &tmp[0], -0.45, &di[1].mat);
 
-    cray_hitablelist_init(&world, pobj, 5);
+    cray_hitablelist_init(&world, pobj, 4);
     cray_hitablelist_append(&world, &sphere[0].obj);
     cray_hitablelist_append(&world, &sphere[1].obj);
     cray_hitablelist_append(&world, &sphere[2].obj);
     cray_hitablelist_append(&world, &sphere[3].obj);
-    cray_hitablelist_append(&world, &sphere[4].obj);
 
     cray_camera_init(&cam);
 
-    cray_camera_aperture(&cam, 1.3);
-    cray_camera_lookfrom(&cam, 3, 3, 2);
+    cray_camera_aperture(&cam, 0.3);
+    cray_camera_lookfrom(&cam, 3, 3, 3);
     cray_camera_lookat(&cam, 0, 0, -1);
     cray_camera_vup(&cam, 0, 1, 0);
-    cray_camera_vfov(&cam, 20);
+    cray_camera_vfov(&cam, 30);
     cray_camera_aspect(&cam, (float)nx / (float) ny);
     cray_camera_focus_dist(&cam, cray_camera_dist(&cam));
     cray_camera_update(&cam);
 
-    for(y = 0; y < 4; y++) {
-        for(x = 0; x < 8; x++) {
-            printf("\nx: %d y: %d:\n", x, y);
+    for(y = 0; y < by; y++) {
+        for(x = 0; x < bx; x++) {
+            printf("rendering block %d of %d\n", y * bx + x, bx * by);
             render(&world, &cam, nx, ny, ns, x*32, y*32, 32, 32, buf, 1);
         }
     }
