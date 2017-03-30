@@ -1,6 +1,7 @@
 #ifndef SPHERE
 
 typedef struct {
+    cray_object obj;
     vec3 center;
     CRAYFLT radius;
     cray_material *mat;
@@ -12,8 +13,6 @@ void cray_sphere_init(cray_sphere *sphere,
     vec3 *center, 
     CRAYFLT r, 
     cray_material *mat);
-
-void cray_sphere_mk_obj(cray_sphere *sphere, cray_object *obj);
 
 int cray_sphere_hit(cray_object *obj, 
     cray_ray *r,

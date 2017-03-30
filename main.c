@@ -75,7 +75,6 @@ int main()
     cray_ray r;
     CRAYFLT u, v;
     cray_sphere sphere[5];
-    cray_object obj[5];
     cray_object *pobj[5];
     cray_hitablelist world;
     cray_camera cam;
@@ -125,19 +124,13 @@ int main()
     VEC3_SET(tmp[0], -1, 0, -1);
     cray_sphere_init(&sphere[4], &tmp[0], -0.45, &di[1].mat);
 
-    cray_sphere_mk_obj(&sphere[0], &obj[0]);
-    cray_sphere_mk_obj(&sphere[1], &obj[1]);
-    cray_sphere_mk_obj(&sphere[2], &obj[2]);
-    cray_sphere_mk_obj(&sphere[3], &obj[3]);
-    cray_sphere_mk_obj(&sphere[4], &obj[4]);
-
-    pobj[0] = &obj[0];
-    pobj[1] = &obj[1];
-    pobj[2] = &obj[2];
-    pobj[3] = &obj[3];
-    pobj[4] = &obj[4];
-
     cray_hitablelist_init(&world, pobj, 5);
+    cray_hitablelist_append(&world, &sphere[0].obj);
+    cray_hitablelist_append(&world, &sphere[1].obj);
+    cray_hitablelist_append(&world, &sphere[2].obj);
+    cray_hitablelist_append(&world, &sphere[3].obj);
+    cray_hitablelist_append(&world, &sphere[4].obj);
+
     cray_camera_init(&cam);
     VEC3_SET(tmp[0], 3, 3, 2);
     VEC3_SET(tmp[1], 0, 0, -1);
@@ -146,7 +139,7 @@ int main()
     VEC3_SUB(tmp[0], tmp[1], col);
 
     dist_to_focus = VEC3_LENGTH(col);
-    aperture = 2.0;
+    aperture = 0.3;
     VEC3_SET(col, 0, 1, 0);
 
     cray_camera_setup(&cam, tmp[0], tmp[1], col, 20, (float)nx / (float)ny, aperture, dist_to_focus);

@@ -67,11 +67,8 @@ void cray_sphere_init(cray_sphere *sphere,
     sphere->center = *center;
     sphere->radius = r;
     sphere->mat = mat;
-}
 
-void cray_sphere_mk_obj(cray_sphere *sphere, cray_object *obj)
-{
-    obj->f = cray_sphere_hit;
-    obj->type = CRAY_SPHERE;
-    obj->ud = sphere;
+    sphere->obj.f = cray_sphere_hit;
+    sphere->obj.type = CRAY_SPHERE;
+    sphere->obj.ud = sphere;
 }

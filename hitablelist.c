@@ -37,5 +37,22 @@ void cray_hitablelist_init(cray_hitablelist *hitlist,
         int list_size)
 {
     hitlist->list = list;
-    hitlist->list_size = list_size;
+    hitlist->list_size = 0;
+    hitlist->max_size = list_size;
+}
+
+int cray_hitablelist_add(cray_hitablelist *hitlist, cray_object *obj, int id)
+{
+   if(id > hitlist->max_size - 1) return 0;
+   hitlist->list[id] = obj;
+   return 1;
+}
+
+int cray_hitablelist_append(cray_hitablelist *hitlist, cray_object *obj)
+{
+    int id;
+    if(hitlist->list_size >= hitlist->max_size) return 0;
+    id = hitlist->list_size;
+    hitlist->list_size++;
+    return cray_hitablelist_add(hitlist, obj, id);
 }
