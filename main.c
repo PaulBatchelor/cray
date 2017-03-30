@@ -59,21 +59,60 @@ static vec3 color(cray_ray *r, cray_hitablelist *world, int depth)
     return tmp[0];
 }
 
+static void render(cray_hitablelist *world, 
+    cray_camera *cam, 
+    int nx, int ny, int ns)
+{
+    FILE *fp;
+    int i, j, s;
+    int ir, ig, ib;
+    vec3 col;
+    vec3 tmp;
+    cray_ray r;
+    CRAYFLT u, v;
+    int step;
+    int size;
+
+    step = 0;
+    size = nx * ny;
+    fp = fopen("out.ppm", "w");
+
+    fprintf(fp, "P3\n%d %d\n255\n", nx, ny);
+    for(j = ny -1; j >= 0; j--) {
+        for(i = 0; i < nx; i++) {
+            VEC3_SET(col, 0, 0, 0);
+            for(s = 0; s < ns; s++) {
+                u = (CRAYFLT) (i + cray_rand()) / (CRAYFLT)nx; 
+                v = (CRAYFLT) (j + cray_rand()) / (CRAYFLT)ny;
+                r = cray_camera_get_ray(cam, u, v);
+                tmp = color(&r, world, 0);
+                VEC3_ADD(col, tmp, col);
+            }
+
+            VEC3_DIVS(col, (CRAYFLT)ns, col);
+            VEC3_SQRT(col, col);
+
+            ir = (int)(255.99 * col.x);
+            ig = (int)(255.99 * col.y);
+            ib = (int)(255.99 * col.z);
+            fprintf(fp, "%d %d %d\n", ir, ig, ib);
+            step++;
+
+            if(step % 100 == 0) {
+                fprintf(stderr, "%06d/%06d\r", step, size);
+            }
+        }
+    }
+
+    fclose(fp);
+}
+
 int main()
 {
     int nx;
     int ny;
     int ns;
-    unsigned int size;
-    int j;
-    int i;
-    int s;
-    int ir, ig, ib;
-    FILE *fp;
-    vec3 col;
     vec3 tmp[2];
-    cray_ray r;
-    CRAYFLT u, v;
     cray_sphere sphere[5];
     cray_object *pobj[5];
     cray_hitablelist world;
@@ -81,16 +120,10 @@ int main()
     cray_lambertian lam[2];
     cray_dielectric di[2];
     cray_metal met[2];
-    unsigned int step;
 
     nx = 200;
     ny = 100;
     ns = 100;
-
-    step = 0;
-    size = nx * ny;
-
-    fp = fopen("out.ppm", "w");
 
     cray_lambertian_init(&lam[0]);
     cray_lambertian_color(&lam[0], 0.8, 0.3, 0.3);
@@ -140,34 +173,6 @@ int main()
     cray_camera_focus_dist(&cam, cray_camera_dist(&cam));
     cray_camera_update(&cam);
 
-    fprintf(fp, "P3\n%d %d\n255\n", nx, ny);
-
-    for(j = ny -1; j >= 0; j--) {
-        for(i = 0; i < nx; i++) {
-            VEC3_SET(col, 0, 0, 0);
-            for(s = 0; s < ns; s++) {
-                u = (CRAYFLT) (i + cray_rand()) / (CRAYFLT)nx; 
-                v = (CRAYFLT) (j + cray_rand()) / (CRAYFLT)ny;
-                r = cray_camera_get_ray(&cam, u, v);
-                tmp[0] = color(&r, &world, 0);
-                VEC3_ADD(col, tmp[0], col);
-            }
-
-            VEC3_DIVS(col, (CRAYFLT)ns, col);
-            VEC3_SQRT(col, col);
-
-            ir = (int)(255.99 * col.x);
-            ig = (int)(255.99 * col.y);
-            ib = (int)(255.99 * col.z);
-            fprintf(fp, "%d %d %d\n", ir, ig, ib);
-            step++;
-
-            if(step % 100 == 0) {
-                fprintf(stderr, "%06d/%06d\r", step, size);
-            }
-        }
-    }
-
-    fclose(fp);
+    render(&world, &cam, nx, ny, ns);
     return 0;
 }
