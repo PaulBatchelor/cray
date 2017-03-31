@@ -13,7 +13,7 @@
 #include "scene.h"
 
 runt_int runt_load_cray(runt_vm *vm);
-
+/*
 static void demo()
 {
     int x, y;
@@ -97,7 +97,7 @@ static void demo()
 
     free(buf);
 }
-
+*/
 static runt_int loader(runt_vm *vm)
 {
     runt_load_minimal(vm);

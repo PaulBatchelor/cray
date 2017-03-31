@@ -14,9 +14,8 @@ cray: $(OBJ)
 	$(CC) $(OBJ) -o $@ $(LDFLAGS)
 
 render: cray
-	./cray 
-	convert out.ppm out.png
-	feh out.png
+	./cray test.rnt
+	feh out.ppm
 
 clean: 
 	rm -rf $(OBJ) cray out.ppm out.png
