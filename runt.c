@@ -418,6 +418,58 @@ static int rproc_cam_update(runt_vm *vm, runt_ptr p)
     return RUNT_OK;
 }
 
+static int rproc_tint_top(runt_vm *vm, runt_ptr p)
+{
+    cray_scene *scene;
+    runt_int rc;
+    runt_float r, g, b;
+    runt_stacklet *s;
+
+    scene = runt_to_cptr(p);
+
+    rc = runt_ppop(vm, &s);
+    RUNT_ERROR_CHECK(rc);
+    b = s->f;
+    
+    rc = runt_ppop(vm, &s);
+    RUNT_ERROR_CHECK(rc);
+    g = s->f;
+    
+    rc = runt_ppop(vm, &s);
+    RUNT_ERROR_CHECK(rc);
+    r = s->f;
+
+    cray_scene_tint_top(scene, r, g, b);
+
+    return RUNT_OK;
+}
+
+static int rproc_tint_bottom(runt_vm *vm, runt_ptr p)
+{
+    cray_scene *scene;
+    runt_int rc;
+    runt_float r, g, b;
+    runt_stacklet *s;
+
+    scene = runt_to_cptr(p);
+
+    rc = runt_ppop(vm, &s);
+    RUNT_ERROR_CHECK(rc);
+    b = s->f;
+    
+    rc = runt_ppop(vm, &s);
+    RUNT_ERROR_CHECK(rc);
+    g = s->f;
+    
+    rc = runt_ppop(vm, &s);
+    RUNT_ERROR_CHECK(rc);
+    r = s->f;
+
+    cray_scene_tint_bottom(scene, r, g, b);
+
+    return RUNT_OK;
+}
+
 runt_int runt_load_cray(runt_vm *vm)
 {
     cray_scene *scene;
@@ -443,6 +495,8 @@ runt_int runt_load_cray(runt_vm *vm)
     cray_define(vm, "cam_dist", 8, rproc_cam_dist, p);
     cray_define(vm, "cam_focus_dist", 14, rproc_cam_focus_dist, p);
     cray_define(vm, "cam_update", 10, rproc_cam_update, p);
+    cray_define(vm, "tint_top", 8, rproc_tint_top, p);
+    cray_define(vm, "tint_bottom", 11, rproc_tint_bottom, p);
 
     return RUNT_OK;
 }

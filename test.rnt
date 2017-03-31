@@ -1,4 +1,4 @@
-256 256 100 4 cray_init
+256 256 200 4 cray_init
 0 0 -1 0.5 
 0.8 0.8 0.0 lambertian
 add_sphere
@@ -15,10 +15,10 @@ add_sphere
 
 0 -100.5 -1 
 100 
-1.0 1.0 1.0 lambertian
+0.7 0.7 0.7 lambertian
 add_sphere
 
-0.8 cam_aperture
+0.4 cam_aperture
 3 3 3 cam_lookfrom
 0 0 -1 cam_lookat
 0 1 0 cam_vup
@@ -27,5 +27,8 @@ add_sphere
 aspect cam_aspect
 cam_dist cam_focus_dist
 cam_update
+
+1.0 1.0 1.0 tint_top
+0.8 0.8 1.0 tint_bottom
 
 "out.ppm" write_ppm

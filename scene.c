@@ -26,9 +26,11 @@ void cray_scene_init(cray_scene *scene,
     cray_hitablelist_init(&scene->world, NULL, 0);
     cray_camera_init(&scene->cam);
 
+    VEC3_SET(scene->tint[0], 1.0, 1.0, 1.0);
+    VEC3_SET(scene->tint[1], 1.0, 1.0, 1.0);
 }
 
-static vec3 color(cray_ray *r, cray_hitablelist *world, int depth)
+static vec3 color(cray_scene *scene, cray_ray *r, int depth)
 {
     vec3 unit_direction;
     vec3 tmp[2];
@@ -36,9 +38,9 @@ static vec3 color(cray_ray *r, cray_hitablelist *world, int depth)
     cray_hitable rec;
     cray_ray scattered;
 
-    if(cray_hitablelist_hit(world, r, 0.001, FLT_MAX, &rec)) {
+    if(cray_hitablelist_hit(&scene->world, r, 0.001, FLT_MAX, &rec)) {
         if(depth < 50 && rec.mat->scatter(rec.mat, &rec, r, &tmp[0], &scattered)) {
-            tmp[1] = color(&scattered, world, depth + 1);
+            tmp[1] = color(scene, &scattered, depth + 1);
             VEC3_MUL(tmp[1], tmp[0], tmp[0]);
             return tmp[0];
         } else {
@@ -52,12 +54,11 @@ static vec3 color(cray_ray *r, cray_hitablelist *world, int depth)
         t = 0.5*(unit_direction.y + 1.0);
 
         /* v1 = (1.0 - t) * vec3(1.0, 1.0, 1.0) */
-        VEC3_SET(tmp[0], 1.0, 1.0, 1.0);
-        VEC3_MULS(tmp[0], (1.0 - t), tmp[0]);
+        VEC3_MULS(scene->tint[0], (1.0 - t), tmp[0]);
 
         /* v2 = t * vec3(0.5, 0.7, 1.0) */
-        VEC3_SET(tmp[1], 0.5, 0.7, 1.0);
-        VEC3_MULS(tmp[1], t, tmp[1]);
+        /* VEC3_SET(tmp[1], 0.5, 0.7, 1.0); */
+        VEC3_MULS(scene->tint[1], t, tmp[1]);
 
         /* reuse unit_direction variable */
         /* unit_direction = v1 + v2 */
@@ -113,10 +114,8 @@ void cray_scene_render(cray_scene *scene,
     int xstart, ystart;
     int xend, yend;
     cray_camera *cam;
-    cray_hitablelist *world;
 
     cam = &scene->cam;
-    world = &scene->world;
 
     step = 0;
     size = w * h;
@@ -135,7 +134,7 @@ void cray_scene_render(cray_scene *scene,
                 u = (CRAYFLT) (i + cray_rand()) / (CRAYFLT)scene->nx; 
                 v = (CRAYFLT) (j + cray_rand()) / (CRAYFLT)scene->ny;
                 r = cray_camera_get_ray(cam, u, v);
-                tmp = color(&r, world, 0);
+                tmp = color(scene, &r, 0);
                 VEC3_ADD(col, tmp, col);
             }
 
@@ -156,3 +155,12 @@ void cray_scene_render(cray_scene *scene,
     }
 }
 
+void cray_scene_tint_top(cray_scene *scene, CRAYFLT r, CRAYFLT g, CRAYFLT b)
+{
+    VEC3_SET(scene->tint[0], r, g, b);
+}
+
+void cray_scene_tint_bottom(cray_scene *scene, CRAYFLT r, CRAYFLT g, CRAYFLT b)
+{
+    VEC3_SET(scene->tint[1], r, g, b);
+}
