@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
+#include <runt.h>
 
 #include "vec3.h"
 #include "ray.h"
@@ -10,6 +11,8 @@
 #include "camera.h"
 #include "material.h"
 #include "scene.h"
+
+runt_int runt_load_cray(runt_vm *vm);
 
 static void demo()
 {
@@ -68,7 +71,7 @@ static void demo()
     cray_sphere_pos(&sphere[3], 1, 0, -1);
     cray_sphere_radius(&sphere[3], 0.5);
 
-    cray_hitablelist_init(world, pobj, 4);
+    cray_hitablelist_init(world, pobj, 1);
     cray_hitablelist_append(world, &sphere[0].obj);
     cray_hitablelist_append(world, &sphere[1].obj);
     cray_hitablelist_append(world, &sphere[2].obj);
@@ -95,8 +98,14 @@ static void demo()
     free(buf);
 }
 
-int main()
+static runt_int loader(runt_vm *vm)
 {
-    demo();
-    return 0;
+    runt_load_minimal(vm);
+    runt_load_cray(vm);
+    return RUNT_OK;
+}
+
+int main(int argc, char *argv[])
+{
+    return irunt_begin(argc, argv, loader);
 }
