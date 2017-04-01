@@ -470,6 +470,12 @@ static int rproc_tint_bottom(runt_vm *vm, runt_ptr p)
     return RUNT_OK;
 }
 
+static int rproc_demo(runt_vm *vm, runt_ptr p)
+{
+    cray_demo();
+    return RUNT_OK;
+}
+
 runt_int runt_load_cray(runt_vm *vm)
 {
     cray_scene *scene;
@@ -497,6 +503,7 @@ runt_int runt_load_cray(runt_vm *vm)
     cray_define(vm, "cam_update", 10, rproc_cam_update, p);
     cray_define(vm, "tint_top", 8, rproc_tint_top, p);
     cray_define(vm, "tint_bottom", 11, rproc_tint_bottom, p);
+    cray_define(vm, "cray_demo", 9, rproc_demo, p);
 
     return RUNT_OK;
 }

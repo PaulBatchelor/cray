@@ -3,7 +3,7 @@
 CFLAGS=-ansi -Wall -Wpedantic -g -O3
 LDFLAGS=-lm -lrunt -ldl
 OBJ=main.o ray.o sphere.o hitablelist.o sqrtf.o rand.o camera.o material.o\
-	lambertian.o metal.o dielectric.o scene.o runt.o
+	lambertian.o metal.o dielectric.o scene.o runt.o demo.o
 
 default: cray
 

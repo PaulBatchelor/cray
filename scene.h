@@ -26,5 +26,6 @@ void cray_scene_render(cray_scene *scene,
 
 void cray_scene_tint_top(cray_scene *scene, CRAYFLT r, CRAYFLT g, CRAYFLT b);
 void cray_scene_tint_bottom(cray_scene *scene, CRAYFLT r, CRAYFLT g, CRAYFLT b);
+void cray_demo();
 
 #endif
