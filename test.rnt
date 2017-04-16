@@ -1,7 +1,14 @@
 # cray_demo
-256 256 200 4 cray_init
+256 256 100 4 cray_init
+
+-1 0 -1 0.5 
+0.8 0.8 0.0 solid
+#0.8 0.8 0.0 lambertian
+add_sphere
+
 0 0 -1 0.5 
 0.8 0.8 0.0 lambertian
+#0.8 0.8 0.8 3.4 dielectric
 add_sphere
 
 # -1 0 -1
@@ -20,7 +27,7 @@ add_sphere
 add_sphere
 
 0.4 cam_aperture
-3 3 3 cam_lookfrom
+0 0 5 cam_lookfrom
 0 0 -1 cam_lookat
 0 1 0 cam_vup
 30 vfov
@@ -32,6 +39,6 @@ cam_update
 1.0 1.0 1.0 tint_top
 0.8 0.8 1.0 tint_bottom
 
-1 cray_maxdepth
+50 cray_maxdepth
 
 "out.ppm" write_ppm

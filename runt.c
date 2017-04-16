@@ -146,6 +146,38 @@ static runt_int rproc_lambertian(runt_vm *vm, runt_ptr p)
     return RUNT_OK;
 }
 
+static runt_int rproc_solid(runt_vm *vm, runt_ptr p)
+{
+    runt_int rc;
+    runt_stacklet *s;
+    cray_solid *sol;
+    runt_float r, g, b;
+
+    rc = runt_ppop(vm, &s);
+    RUNT_ERROR_CHECK(rc);
+    b = s->f;
+    
+    rc = runt_ppop(vm, &s);
+    RUNT_ERROR_CHECK(rc);
+    g = s->f;
+    
+    rc = runt_ppop(vm, &s);
+    RUNT_ERROR_CHECK(rc);
+    r = s->f;
+
+    runt_malloc(vm, sizeof(cray_solid), (void **)&sol);
+    runt_mark_set(vm);
+    cray_solid_init(sol);
+    cray_solid_color(sol, r, g, b);
+   
+    rc = runt_ppush(vm, &s);
+    RUNT_ERROR_CHECK(rc);
+
+    s->p = runt_mk_cptr(vm, &sol->mat);
+
+    return RUNT_OK;
+}
+
 static runt_int rproc_metallic(runt_vm *vm, runt_ptr p)
 {
     runt_int rc;
@@ -548,6 +580,7 @@ runt_int runt_load_cray(runt_vm *vm)
     cray_define(vm, "add_sphere", 10, rproc_add_sphere, p);
     cray_define(vm, "lambertian", 10, rproc_lambertian, p);
     cray_define(vm, "metallic", 8, rproc_metallic, p);
+    cray_define(vm, "solid", 5, rproc_solid, p);
     cray_define(vm, "dielectric", 10, rproc_dielectric, p);
     cray_define(vm, "cam_aperture", 12, rproc_cam_aperture, p);
     cray_define(vm, "cam_lookfrom", 12, rproc_cam_lookfrom, p);

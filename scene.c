@@ -77,9 +77,13 @@ static vec3 color(cray_scene *scene, cray_ray *r, int depth, int x, int y)
 
     if(cray_hitablelist_hit(&scene->world, r, 0.001, FLT_MAX, &rec)) {
         if(depth < scene->maxdepth  && rec.mat->scatter(rec.mat, &rec, r, &tmp[0], &scattered)) {
-            tmp[1] = color(scene, &scattered, depth + 1, x, y);
-            VEC3_MUL(tmp[1], tmp[0], tmp[0]);
-            return tmp[0];
+            if(rec.mat->type == CRAY_SOLID) {
+                return tmp[0];
+            } else {
+                tmp[1] = color(scene, &scattered, depth + 1, x, y);
+                VEC3_MUL(tmp[1], tmp[0], tmp[0]);
+                return tmp[0];
+            }
         } else {
             scene->shadow(scene, clr, x, y);
             VEC3_SET(tmp[0], clr[0], clr[1], clr[2]);
