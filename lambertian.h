@@ -3,7 +3,6 @@
 
 typedef struct {
     cray_material mat;
-    vec3 albedo;
 } cray_lambertian;
 
 void cray_lambertian_init(cray_lambertian *l);

@@ -10,14 +10,23 @@ typedef int (* cray_matfunc) (cray_material*,
         vec3 *,
         cray_ray *);
 
+typedef void (* cray_tex) (cray_material*,
+        CRAYFLT ,
+        CRAYFLT ,
+        vec3 *,
+        vec3 *);
+
 struct cray_material {
     cray_matfunc scatter;
+    cray_tex value;
     unsigned int type;
     void *ud;
+    vec3 albedo;
 };
 
 void cray_material_init(cray_material *m);
 vec3 cray_reflect(vec3 *v, vec3 *n);
+void cray_material_albedo(cray_material *m, CRAYFLT r, CRAYFLT g, CRAYFLT b);
 
 #include "lambertian.h"
 #include "metal.h"

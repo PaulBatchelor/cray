@@ -12,9 +12,7 @@ static int lambertian (cray_material *m,
         cray_ray *scattered)
 {
     vec3 tmp[2];
-    cray_lambertian *l;
 
-    l = m->ud;
     /* target = rec.p + rec.normal + random_in_unit_sphere() */
     VEC3_ADD(hit->p, hit->normal, tmp[0]);
     tmp[1] = random_in_unit_sphere();
@@ -23,7 +21,9 @@ static int lambertian (cray_material *m,
     VEC3_SUB(tmp[0], hit->p, tmp[0]);
     RAY_SET(*scattered, hit->p, tmp[0]);
 
-    *attenuation = l->albedo;
+    /* *attenuation = l->albedo; */
+
+    m->value(m, 0, 0, &hit->p, attenuation);
 
     return 1;
 }
@@ -34,10 +34,9 @@ void cray_lambertian_init(cray_lambertian *l)
     l->mat.type = CRAY_LAMBERTIAN;
     l->mat.ud = l;
     l->mat.scatter = lambertian;
-    VEC3_SET(l->albedo, 1.0, 1.0, 1.0);
 }
 
 void cray_lambertian_color(cray_lambertian *l, CRAYFLT r, CRAYFLT g, CRAYFLT b)
 {
-    VEC3_SET(l->albedo, r, g, b);
+    cray_material_albedo(&l->mat, r, g, b);
 }
