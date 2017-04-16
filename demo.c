@@ -10,6 +10,7 @@
 #include "camera.h"
 #include "material.h"
 #include "scene.h"
+#include "scene_private.h"
 
 void cray_demo()
 {
@@ -86,7 +87,8 @@ void cray_demo()
     for(y = 0; y < by; y++) {
         for(x = 0; x < bx; x++) {
             printf("rendering block %d of %d\n", y * bx + x, bx * by);
-            cray_scene_render(&scene, x*32, y*32, 32, 32, buf, 1);
+            cray_scene_render(&scene, x*32, y*32, 32, 32, buf, 
+                CRAY_VERBOSE);
         }
     }
 

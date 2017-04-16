@@ -1,9 +1,9 @@
-cray_demo
-# 256 256 200 4 cray_init
-# 0 0 -1 0.5 
-# 0.8 0.8 0.0 lambertian
-# add_sphere
-# 
+# cray_demo
+256 256 200 4 cray_init
+0 0 -1 0.5 
+0.8 0.8 0.0 lambertian
+add_sphere
+
 # -1 0 -1
 # 0.5
 # 0.3 0.3 0.8 0.1 metallic
@@ -14,22 +14,24 @@ cray_demo
 # 0.8 1.0 0.8 2.3 dielectric
 # add_sphere
 # 
-# 0 -100.5 -1 
-# 100 
-# 0.7 0.7 0.7 lambertian
-# add_sphere
-# 
-# 0.4 cam_aperture
-# 3 3 3 cam_lookfrom
-# 0 0 -1 cam_lookat
-# 0 1 0 cam_vup
-# 30 vfov
-# 
-# aspect cam_aspect
-# cam_dist cam_focus_dist
-# cam_update
-# 
-# 1.0 1.0 1.0 tint_top
-# 0.8 0.8 1.0 tint_bottom
-# 
-# "out.ppm" write_ppm
+0 -100.5 -1 
+100 
+0.7 0.7 0.7 lambertian
+add_sphere
+
+0.4 cam_aperture
+3 3 3 cam_lookfrom
+0 0 -1 cam_lookat
+0 1 0 cam_vup
+30 vfov
+
+aspect cam_aspect
+cam_dist cam_focus_dist
+cam_update
+
+1.0 1.0 1.0 tint_top
+0.8 0.8 1.0 tint_bottom
+
+1 cray_maxdepth
+
+"out.ppm" write_ppm

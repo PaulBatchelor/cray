@@ -1,10 +1,15 @@
 #ifndef RAYH
 #define RAYH
 
-typedef struct {
+#ifndef CRAY_RAY_STRUCT
+#define CRAY_RAY_STRUCT
+typedef struct cray_ray cray_ray;
+#endif
+
+struct cray_ray {
     vec3 A;
     vec3 B;
-} cray_ray;
+};
 
 vec3 cray_ray_origin(cray_ray *ray);
 vec3 cray_ray_direction(cray_ray *ray);

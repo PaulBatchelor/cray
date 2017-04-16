@@ -11,6 +11,9 @@
 #include "rand.h"
 #include "material.h"
 #include "scene.h"
+#include "scene_private.h"
+
+static cray_scene *g_scene;
 
 static runt_int rproc_cray_init(runt_vm *vm, runt_ptr p)
 {
@@ -476,6 +479,59 @@ static int rproc_demo(runt_vm *vm, runt_ptr p)
     return RUNT_OK;
 }
 
+static int rproc_sampling(runt_vm *vm, runt_ptr p)
+{
+    runt_int rc;
+    runt_stacklet *s;
+    runt_float sampling;
+    cray_scene *scene;
+
+    scene = runt_to_cptr(p);
+    rc = runt_ppop(vm, &s);
+    RUNT_ERROR_CHECK(rc);
+    sampling = s->f;
+
+    scene->ns = sampling;
+
+    return RUNT_OK;
+}
+
+static int rproc_maxdepth(runt_vm *vm, runt_ptr p)
+{
+    runt_int rc;
+    runt_stacklet *s;
+    runt_int maxdepth;
+    cray_scene *scene;
+
+    scene = runt_to_cptr(p);
+    rc = runt_ppop(vm, &s);
+    RUNT_ERROR_CHECK(rc);
+    maxdepth = s->f;
+
+    cray_scene_maxdepth(scene, maxdepth);
+
+    return RUNT_OK;
+}
+
+static int rproc_bgcolor(runt_vm *vm, runt_ptr p)
+{
+    cray_scene *scene;
+
+    scene = runt_to_cptr(p);
+    cray_scene_default_bgcolor(scene);
+    return RUNT_OK;
+}
+
+static int rproc_shadow(runt_vm *vm, runt_ptr p)
+{
+    cray_scene *scene;
+
+    scene = runt_to_cptr(p);
+    cray_scene_default_shadow(scene);
+    return RUNT_OK;
+}
+
+
 runt_int runt_load_cray(runt_vm *vm)
 {
     cray_scene *scene;
@@ -484,6 +540,8 @@ runt_int runt_load_cray(runt_vm *vm)
     runt_malloc(vm, sizeof(cray_scene), (void **)&scene);
 
     p = runt_mk_cptr(vm, scene);
+
+    g_scene = scene;
 
     cray_define(vm, "cray_init", 9, rproc_cray_init, p);
     cray_define(vm, "write_ppm", 9, rproc_write_ppm, p);
@@ -504,6 +562,15 @@ runt_int runt_load_cray(runt_vm *vm)
     cray_define(vm, "tint_top", 8, rproc_tint_top, p);
     cray_define(vm, "tint_bottom", 11, rproc_tint_bottom, p);
     cray_define(vm, "cray_demo", 9, rproc_demo, p);
+    cray_define(vm, "cray_sampling", 13, rproc_sampling, p);
+    cray_define(vm, "cray_maxdepth", 13, rproc_maxdepth, p);
+    cray_define(vm, "cray_bgcolor", 12, rproc_bgcolor, p);
+    cray_define(vm, "cray_shadow", 11, rproc_shadow, p);
 
     return RUNT_OK;
+}
+
+cray_scene *cray_get()
+{
+    return g_scene;
 }
