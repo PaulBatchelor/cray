@@ -10,10 +10,8 @@ static int solid(cray_material *m,
         vec3 *attenuation, 
         cray_ray *scattered)
 {
-    cray_solid *s;
-    s = m->ud;
     RAY_SET(*scattered, hit->p, hit->normal);
-    *attenuation = s->albedo;
+    m->value(m, 0, 0, &hit->p, attenuation);
     return 1;
 }
 
@@ -28,5 +26,5 @@ void cray_solid_init(cray_solid *s)
 
 void cray_solid_color(cray_solid *s, CRAYFLT r, CRAYFLT g, CRAYFLT b)
 {
-    VEC3_SET(s->albedo, r, g, b);
+    cray_material_albedo(&s->mat, r, g, b);
 }
