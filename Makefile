@@ -1,7 +1,7 @@
 .PHONY: render
 
-CFLAGS=-ansi -Wall -Wpedantic -g -O3 -fPIC
-LDFLAGS=-lm -lrunt -ldl
+CFLAGS=-ansi -Wall -Wpedantic -g -O3 -fPIC -I$(HOME)/.runt/include
+LDFLAGS=-lm -lrunt -ldl -L$(HOME)/.runt/lib
 OBJ=ray.o sphere.o hitablelist.o sqrtf.o rand.o camera.o material.o\
 	lambertian.o metal.o dielectric.o scene.o runt.o demo.o solid.o
 
@@ -13,7 +13,7 @@ all: cray librunt_cray.a
 	$(CC) $(CFLAGS) -c $< -o $@
 
 cray: $(OBJ) main.c
-	$(CC) main.c $(OBJ) -o $@ $(LDFLAGS)
+	$(CC) $(CFLAGS) main.c $(OBJ) -o $@ $(LDFLAGS)
 
 librunt_cray.a: $(OBJ)
 	ar rcs $@ $(OBJ)
